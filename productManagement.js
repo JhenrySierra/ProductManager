@@ -1,40 +1,54 @@
+const fs = require('fs');
+
 class ProductManager {
     constructor() {
         this.products = [];
-        this.lastProductId = 0; //used to generate an ID that auto-increments in 1
+        this.lastProductId = 0;
     }
 
-    //Method to add a product (it makes all fields mandatory)
     addProduct(product) {
         if (!product.code || !product.title || !product.description || !product.price || !product.thumbnail || !product.stock) {
             console.log('All fields are mandatory.');
             return;
         }
 
-        //Returns an error when the new product is added with a code that is already used in the array
         const existingProduct = this.products.find(p => p.code === product.code);
         if (existingProduct) {
             console.log('Product with the same code already exists.');
             return;
         }
 
-        //Adds an auto-generated ID that increments in 1 based on lastProductId
         const newProduct = {
             ...product,
             id: ++this.lastProductId,
         };
 
-        //Push the newProduct to the array products
         this.products.push(newProduct);
-        console.log('Product added successfully.');
+
+        fs.writeFile('products.json', JSON.stringify(this.products), (err) => {
+            if (err) {
+                console.log('Error saving products:', err);
+            } else {
+                console.log('Product added successfully.');
+            }
+        });
     }
 
-    //Gets all products in the array
     getProducts() {
-        return this.products;
+        if (!fs.existsSync(this.path)) {
+            return [];
+        }
+
+        const productsData = fs.readFileSync(this.path, 'utf8');
+        if (!productsData) {
+            return [];
+        }
+
+        const products = JSON.parse(productsData);
+        this.products = products; // Update the 'products' array
+        return products;
     }
 
-    //Gets products by ID (the one auto-generated)
     getProductById(productId) {
         const product = this.products.find(product => product.id === productId);
         if (product) {
@@ -43,9 +57,43 @@ class ProductManager {
             console.log('Product not found.');
         }
     }
-}
 
-// Instancing the class
+    updateProduct(productId, field, value) {
+        const productIndex = this.products.findIndex(product => product.id === productId);
+        if (productIndex === -1) {
+            console.log('Product not found.');
+            return;
+        }
+
+        this.products[productIndex][field] = value;
+
+        fs.writeFile('products.json', JSON.stringify(this.products), (err) => {
+            if (err) {
+                console.log('Error updating product:', err);
+            } else {
+                console.log('Product updated successfully.');
+            }
+        });
+    }
+
+    deleteProduct(productId) {
+        const productIndex = this.products.findIndex(product => product.id === productId);
+        if (productIndex === -1) {
+            console.log('Product not found.');
+            return;
+        }
+
+        const deletedProduct = this.products.splice(productIndex, 1)[0];
+
+        try {
+            fs.writeFileSync(this.path, JSON.stringify(this.products));
+            console.log('Product deleted successfully:', deletedProduct);
+        } catch (err) {
+            console.log('Error deleting product:', err);
+        }
+    }
+
+}
 
 const manager = new ProductManager();
 
@@ -57,7 +105,6 @@ manager.addProduct({
     thumbnail: 'product1.jpg',
     stock: 10
 });
-// Output: Product added successfully.
 
 manager.addProduct({
     code: 'P2',
@@ -67,7 +114,6 @@ manager.addProduct({
     thumbnail: 'product2.jpg',
     stock: 5
 });
-// Output: Product added successfully.
 
 manager.addProduct({
     code: 'P3',
@@ -77,10 +123,5 @@ manager.addProduct({
     thumbnail: 'product3.jpg',
     stock: 3
 });
-// Output: Product added successfully.
-console.log('Testing method getProducts, returns all Products added in the array')
-console.log(manager.getProducts());
-// Output: returns all Products added in the array
-console.log('Testing method getProductById, returns the product with the ID 2 that was automatically generated.')
-console.log(manager.getProductById(2));
-// Output: returns the product with the ID 2 that was automatically generated.
+
+manager.updateProduct(2, 'title', 'Updated Wireless Earbuds')
