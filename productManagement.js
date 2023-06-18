@@ -1,9 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 
 class ProductManager {
     constructor() {
         this.products = [];
         this.lastProductId = 0;
+        this.path = path.join(__dirname, 'products.json');
     }
 
     addProduct(product) {
@@ -25,7 +27,7 @@ class ProductManager {
 
         this.products.push(newProduct);
 
-        fs.writeFile('products.json', JSON.stringify(this.products), (err) => {
+        fs.writeFile(this.path, JSON.stringify(this.products), (err) => {
             if (err) {
                 console.log('Error saving products:', err);
             } else {
@@ -45,7 +47,7 @@ class ProductManager {
         }
 
         const products = JSON.parse(productsData);
-        this.products = products; // Update the 'products' array
+        this.products = products; 
         return products;
     }
 
@@ -67,7 +69,7 @@ class ProductManager {
 
         this.products[productIndex][field] = value;
 
-        fs.writeFile('products.json', JSON.stringify(this.products), (err) => {
+        fs.writeFile(this.path, JSON.stringify(this.products), (err) => {
             if (err) {
                 console.log('Error updating product:', err);
             } else {
@@ -92,7 +94,6 @@ class ProductManager {
             console.log('Error deleting product:', err);
         }
     }
-
 }
 
 const manager = new ProductManager();
@@ -124,4 +125,70 @@ manager.addProduct({
     stock: 3
 });
 
-manager.updateProduct(2, 'title', 'Updated Wireless Earbuds')
+manager.addProduct({
+    code: 'P4',
+    title: 'Bluetooth Speaker',
+    description: 'Portable Bluetooth speaker with excellent sound quality',
+    price: 39.99,
+    thumbnail: 'product4.jpg',
+    stock: 8
+});
+
+manager.addProduct({
+    code: 'P5',
+    title: 'Smartwatch',
+    description: 'Feature-packed smartwatch for fitness and notifications',
+    price: 79.99,
+    thumbnail: 'product5.jpg',
+    stock: 2
+});
+
+manager.addProduct({
+    code: 'P6',
+    title: 'Gaming Mouse',
+    description: 'Ergonomic gaming mouse with customizable buttons',
+    price: 49.99,
+    thumbnail: 'product6.jpg',
+    stock: 6
+});
+
+manager.addProduct({
+    code: 'P7',
+    title: 'Portable Power Bank',
+    description: 'High-capacity power bank for charging devices on the go',
+    price: 24.99,
+    thumbnail: 'product7.jpg',
+    stock: 12
+});
+
+manager.addProduct({
+    code: 'P8',
+    title: 'Bluetooth Headphones',
+    description: 'Wireless Bluetooth headphones with noise cancellation',
+    price: 69.99,
+    thumbnail: 'product8.jpg',
+    stock: 4
+});
+
+manager.addProduct({
+    code: 'P9',
+    title: 'Wireless Mouse',
+    description: 'Wireless mouse with precise tracking and long battery life',
+    price: 19.99,
+    thumbnail: 'product9.jpg',
+    stock: 9
+});
+
+manager.addProduct({
+    code: 'P10',
+    title: 'External Hard Drive',
+    description: 'Portable external hard drive for data backup and storage',
+    price: 89.99,
+    thumbnail: 'product10.jpg',
+    stock: 7
+});
+
+
+manager.updateProduct(2, 'title', 'Updated Wireless Earbuds');
+
+module.exports = ProductManager;
