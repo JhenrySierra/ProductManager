@@ -12,11 +12,11 @@ const ProductManager = require('./productManagement');
 const productManager = new ProductManager();
 
 // Retrieve all products
-app.get('/products', (req, res) => {
+app.get('/api/products', (req, res) => {
     res.json(products);
 });
 
-app.get('/products/:pid', (req, res) => {
+app.get('/api/products/:pid', (req, res) => {
     const productId = parseInt(req.params.pid);
 
     // Get the requested product using the getProductById() method from the ProductManager instance
@@ -31,14 +31,14 @@ app.get('/products/:pid', (req, res) => {
 });
 
 // Add a new product
-app.post('/products', (req, res) => {
+app.post('/api/products', (req, res) => {
     const newProduct = req.body;
     productManager.addProduct(newProduct);
     res.status(201).json(newProduct);
 });
 
 // Update a product
-app.put('/products/:pid', (req, res) => {
+app.put('/api/products/:pid', (req, res) => {
     const productId = req.params.pid;
     const updatedProduct = req.body;
 
@@ -52,7 +52,7 @@ app.put('/products/:pid', (req, res) => {
 });
 
 // Delete a product
-app.delete('/products/:pid', (req, res) => {
+app.delete('/api/products/:pid', (req, res) => {
     const productId = req.params.pid;
     const deleted = productManager.deleteProduct(productId);
 
@@ -64,20 +64,20 @@ app.delete('/products/:pid', (req, res) => {
 });
 
 // Retrieve all carts
-app.get('/carts', (req, res) => {
+app.get('/api/carts', (req, res) => {
     const allCarts = productManager.getAllCarts();
     res.json(allCarts);
 });
 
 // Add a new cart
-app.post('/carts', (req, res) => {
+app.post('/api/carts', (req, res) => {
     const newCart = req.body;
     productManager.createCart(newCart);
     res.status(201).json(newCart);
 });
 
 // Retrieve a cart by ID
-app.get('/carts/:cid', (req, res) => {
+app.get('/api/carts/:cid', (req, res) => {
     const cartId = parseInt(req.params.cid);
     const cart = productManager.getCartById(cartId);
 
@@ -90,7 +90,7 @@ app.get('/carts/:cid', (req, res) => {
 });
 
 // Add a product to a cart
-app.post('/carts/:cid/products/:pid', (req, res) => {
+app.post('/api/carts/:cid/products/:pid', (req, res) => {
     const cartId = parseInt(req.params.cid);
     const productId = parseInt(req.params.pid);
 
@@ -99,7 +99,7 @@ app.post('/carts/:cid/products/:pid', (req, res) => {
 });
 
 // Update a cart
-app.put('/carts/:cid', (req, res) => {
+app.put('/api/carts/:cid', (req, res) => {
     const cartId = req.params.cid;
     const updatedCart = req.body;
 
@@ -113,7 +113,7 @@ app.put('/carts/:cid', (req, res) => {
 });
 
 // Delete a cart
-app.delete('/carts/:cid', (req, res) => {
+app.delete('/api/carts/:cid', (req, res) => {
     const cartId = req.params.cid;
 
     const cartIndex = carts.findIndex((cart) => cart.id === cartId);
