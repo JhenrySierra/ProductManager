@@ -1,3 +1,5 @@
+// carts.routes.js
+
 const express = require('express');
 const router = express.Router();
 const ProductManager = require('./productManagement');
@@ -18,10 +20,9 @@ router.post('/', (req, res) => {
 });
 
 // Retrieve a cart by ID
-router.get('/:cid', (req, res) => {
-    const cartId = parseInt(req.params.cid);
+router.get('/:cartId', (req, res) => {
+    const { cartId } = req.params;
     const cart = productManager.getCartById(cartId);
-
     if (cart) {
         const cartProducts = cart.products;
         res.json(cartProducts);
@@ -31,36 +32,30 @@ router.get('/:cid', (req, res) => {
 });
 
 // Add a product to a cart
-router.post('/:cid/products/:pid', (req, res) => {
-    const cartId = parseInt(req.params.cid);
-    const productId = parseInt(req.params.pid);
-
+router.post('/:cartId/products/:productId', (req, res) => {
+    const { cartId, productId } = req.params;
     productManager.addProductToCart(cartId, productId);
     res.json({ message: 'Product added to cart successfully' });
 });
 
 // Update a cart
-router.put('/:cid', (req, res) => {
-    const cartId = req.params.cid;
+router.put('/:cartId', (req, res) => {
+    const { cartId } = req.params;
     const updatedCart = req.body;
-
-    const cartIndex = productManager.getCarts().findIndex((cart) => cart.id === cartId);
+    const cartIndex = productManager.updateCart(cartId, updatedCart);
     if (cartIndex !== -1) {
-        productManager.getCarts()[cartIndex] = { ...productManager.getCarts()[cartIndex], ...updatedCart };
-        res.json(productManager.getCarts()[cartIndex]);
+        res.json(productManager.getAllCarts()[cartIndex]);
     } else {
         res.status(404).json({ error: 'Cart not found' });
     }
 });
 
 // Delete a cart
-router.delete('/:cid', (req, res) => {
-    const cartId = req.params.cid;
-
-    const cartIndex = productManager.getCarts().findIndex((cart) => cart.id === cartId);
-    if (cartIndex !== -1) {
-        const deletedCart = productManager.getCarts().splice(cartIndex, 1);
-        res.json(deletedCart[0]);
+router.delete('/:cartId', (req, res) => {
+    const { cartId } = req.params;
+    const deletedCart = productManager.deleteCart(cartId);
+    if (deletedCart) {
+        res.json(deletedCart);
     } else {
         res.status(404).json({ error: 'Cart not found' });
     }
