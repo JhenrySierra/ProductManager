@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const ProductManager = require('./productManagement');
+const ProductManager = require('../productManagement');
 
 const productManager = new ProductManager();
 
