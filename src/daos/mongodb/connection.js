@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectionString = 'mongodb://localhost:27017/ecommerce';
+const connectionString = 'mongodb+srv://jhenrims:Wersdfzxc21@ecommerce.v0liqcx.mongodb.net/';
 
 async function connectToDatabase() {
     try {
