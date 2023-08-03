@@ -1,18 +1,31 @@
 const ProductDaoMongoDB = require("../daos/mongodb/product.dao.js");
 const prodDao = new ProductDaoMongoDB();
+const { QueryOptions } = require("mongoose-paginate-v2");
 
-// import { __dirname } from "../utils.js";
-// import ProductDaoFS from "../daos/filesystem/product.dao.js";
-// const prodDao = new ProductDaoFS(__dirname+'/daos/filesystem/products.json');
 
-const getAll = async () => {
+const getAll = async (options) => {
     try {
-        const response = await prodDao.getAll();
-        return response;
+        const { limit = 10, page = 1, sort = { price: 1 }, query } = options;
+
+        const queryOptions = {
+            limit: limit,
+            page: page,
+            sort: sort,
+        };
+
+        if (query) {
+            queryOptions.query = { title: { $regex: query, $options: "i" } };
+        }
+
+        const { docs: products, totalDocs: totalProducts, totalPages } =
+            await prodDao.getAll(queryOptions);
+
+        return { payload: products, totalProducts, totalPages }; 
     } catch (error) {
         console.log(error);
+        throw error;
     }
-}
+};
 
 const getById = async (id) => {
     try {

@@ -1,8 +1,31 @@
 const service = require("../services/product.services.js");
 
-const getAll = async (_, res, next) => {
+const getAll = async (req, res, next) => {
     try {
-        const response = await service.getAll();
+        const { limit = 10, page = 1, sort, query } = req.query;
+
+        const options = {
+            limit: limit ? parseInt(limit) : 10,
+            page: page ? parseInt(page) : 1,
+            sort: sort === "desc" ? "desc" : "asc",
+            query: query || undefined,
+        };
+
+        const result = await service.getAll(options);
+
+        const response = {
+            status: "success",
+            payload: result.payload,
+            totalPages: result.totalPages,
+            prevPage: options.page > 1 ? options.page - 1 : null,
+            nextPage: options.page < result.totalPages ? options.page + 1 : null,
+            page: options.page,
+            hasPrevPage: options.page > 1,
+            hasNextPage: options.page < result.totalPages,
+            prevLink: options.page > 1 ? `/products?limit=${options.limit}&page=${options.page - 1}` : null,
+            nextLink: options.page < result.totalPages ? `/products?limit=${options.limit}&page=${options.page + 1}` : null,
+        };
+
         res.status(200).json(response);
     } catch (error) {
         next(error);
