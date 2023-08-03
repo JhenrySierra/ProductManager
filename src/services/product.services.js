@@ -8,6 +8,7 @@ const prodDao = new ProductDaoMongoDB();
 const getAll = async () => {
     try {
         const response = await prodDao.getAll();
+        console.log(response, "product.service")
         return response;
     } catch (error) {
         console.log(error);
