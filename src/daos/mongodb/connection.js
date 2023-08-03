@@ -4,7 +4,7 @@ const connectionString = 'mongodb+srv://jhenrims:Wersdfzxc21@eCommerce.v0liqcx.m
 
 async function connectToDatabase() {
     try {
-        await mongoose.connect(connectionString);
+        await mongoose.connect(connectionString, { dbName: 'eCommerce' });
         console.log('Conectado a la base de datos de MongoDB!');
     } catch (error) {
         console.log(error);

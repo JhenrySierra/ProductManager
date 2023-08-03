@@ -3,8 +3,6 @@ const service = require("../services/product.services.js");
 const getAll = async (_, res, next) => {
     try {
         const response = await service.getAll();
-        console.log(response, "product.controller")
-
         res.status(200).json(response);
     } catch (error) {
         next(error);

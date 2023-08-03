@@ -4,8 +4,6 @@ class ProductDaoMongoDB {
     async getAll() {
         try {
             const response = await ProductModel.find({});
-            console.log(response, "product.dao")
-
             if (response.length === 0) {
                 console.log("No products found in the database."); // Log a message if the array is empty
             }
