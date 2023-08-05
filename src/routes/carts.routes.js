@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const CartModel = require('../daos/mongodb/models/cart.model');
 const ProductModel = require('../daos/mongodb/models/product.model');
+const mongoose = require('mongoose');
 
 
 
@@ -31,11 +32,20 @@ router.post('/', async (req, res) => {
 // Retrieve a cart by ID
 router.get('/:cartId', async (req, res) => {
     try {
-        const newCartData = req.body;
-        const createdCart = await CartModel.create(newCartData);
-        res.status(201).json(createdCart);
+        const { cartId } = req.params;
+
+        // Use the .populate() method to replace the product IDs with the actual product documents
+        const cart = await CartModel.findById(cartId).populate('products.product');
+
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' });
+        }
+
+        // Extract only the products array from the cart
+        const cartProducts = cart.products;
+
+        res.json(cartProducts);
     } catch (error) {
-        console.error('Error creating cart:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -44,18 +54,40 @@ router.get('/:cartId', async (req, res) => {
 router.post('/:cartId/products/:productId', async (req, res) => {
     try {
         const { cartId, productId } = req.params;
-        const product = await ProductModel.findById(productId);
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+        const { quantity } = req.body;
+
+        // Validate the ObjectId format of the product ID
+        if (!mongoose.isValidObjectId(productId)) {
+            return res.status(400).json({ error: 'Invalid product ID format' });
         }
+
+        // Validate that the quantity is a positive integer
+        if (!Number.isInteger(quantity) || quantity <= 0) {
+            return res.status(400).json({ error: 'Invalid quantity. Must be a positive integer' });
+        }
+
+        // Find the cart by its ID
         const cart = await CartModel.findById(cartId);
         if (!cart) {
             return res.status(404).json({ error: 'Cart not found' });
         }
-        cart.products.push(productId);
+
+        // Find the product in the cart by its ID
+        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+
+        if (productIndex === -1) {
+            // If the product is not in the cart, add it to the cart with the specified quantity
+            cart.products.push({ product: productId, quantity });
+        } else {
+            // If the product is already in the cart, update its quantity
+            cart.products[productIndex].quantity = quantity;
+        }
+
+        // Save the updated cart
         await cart.save();
-        res.json({ message: 'Product added to cart successfully' });
+        res.json({ message: 'Product added/updated in the cart successfully' });
     } catch (error) {
+        console.error('Error adding product to cart:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -110,15 +142,15 @@ router.delete('/:cartId/products/:productId', async (req, res) => {
     try {
         const { cartId, productId } = req.params;
 
+        // Find the cart by its ID
         const cart = await CartModel.findById(cartId);
         if (!cart) {
             return res.status(404).json({ error: 'Cart not found' });
         }
 
-        // Find the product index in the cart's products array
-        const productIndex = cart.products.indexOf(productId);
+        // Find the product in the cart by its ID
+        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
 
-        // If the product is not in the cart, return an error
         if (productIndex === -1) {
             return res.status(404).json({ error: 'Product not found in the cart' });
         }
@@ -126,6 +158,7 @@ router.delete('/:cartId/products/:productId', async (req, res) => {
         // Remove the product from the cart
         cart.products.splice(productIndex, 1);
 
+        // Save the updated cart
         await cart.save();
         res.json({ message: 'Product removed from cart successfully' });
     } catch (error) {

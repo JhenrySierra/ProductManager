@@ -1,20 +1,20 @@
 const service = require("../services/product.services.js");
+const path = require('path');
+const exphbs = require('express-handlebars');
 
 const getAll = async (req, res, next) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
-
         const options = {
             limit: limit ? parseInt(limit) : 10,
             page: page ? parseInt(page) : 1,
-            sort: sort === "desc" ? "desc" : "asc",
+            sort: sort === 'desc' ? 'desc' : 'asc',
             query: query || undefined,
         };
-
         const result = await service.getAll(options);
-
-        const response = {
-            status: "success",
+        
+        return {
+            status: 'success',
             payload: result.payload,
             totalPages: result.totalPages,
             prevPage: options.page > 1 ? options.page - 1 : null,
@@ -26,9 +26,9 @@ const getAll = async (req, res, next) => {
             nextLink: options.page < result.totalPages ? `/products?limit=${options.limit}&page=${options.page + 1}` : null,
         };
 
-        res.status(200).json(response);
+
     } catch (error) {
-        next(error);
+        throw error;
     }
 };
 
