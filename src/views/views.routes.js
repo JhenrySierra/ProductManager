@@ -6,23 +6,25 @@ const productController = require('../controllers/product.controllers.js');
 router.get('/', async (req, res, next) => {
     try {
         const products = await productController.getAll(req);
-        res.render('products', { payload: products });
+        const username = req.session.username;
+        const role = req.session.role; 
+
+        res.render('products', { payload: products, username, role });
     } catch (error) {
         next(error);
     }
 });
 
-// View to display a single product
+// View to display a single product (not implemented yet)
 router.get('/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
-        const product = await productController.getById(id);
+        const product = await productController.getById(req, res, next);
         res.render('product', { product });
     } catch (error) {
         next(error);
     }
 });
 
-// Add other view routes as needed
 
 module.exports = router;

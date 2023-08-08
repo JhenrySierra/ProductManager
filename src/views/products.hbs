@@ -6,27 +6,19 @@
 </head>
 
 <body>
-    <h1>Product List</h1>
+    <h2>Welcome, {{username}} ({{role}})</h2>
 
+    <h3>Product List</h3>
     {{#each payload.payload}}
-    <div>
         {{#each this}}
-        <div>
-            .
-            {{stock}}
-            {{title}}
-            {{description}}
+            <p>{{stock}} {{title}}</p>
+            <p>{{description}}</p>
             {{price}}
 
-            <button onclick="addToCart('{{_id}}')">Add to Cart</button>
-
-        </div>
-        <!-- Add other product details as needed -->
         {{/each}}
-    </div>
+                            <button onclick="addToCart('{{_id}}')">Add to Cart</button><br><br><br>
+
     {{/each}}
-
-
 
     <!-- Pagination links -->
     {{#if payload.hasNextPage}}
@@ -37,12 +29,12 @@
     <a href="{{payload.prevLink}}">Previous</a>
     {{/if}}
 
-        <script>
-            function addToCart(productId) {
-                // You can implement the logic here to add the product with the given productId to the cart
-                console.log('Adding product to cart:', productId);
-            }
-        </script>
+    <script>
+        function addToCart(productId) {
+            console.log('Adding product to cart:', productId);
+        }
+
+    </script>
 </body>
 
 </html>

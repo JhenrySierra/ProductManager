@@ -11,5 +11,4 @@ async function connectToDatabase() {
     }
 }
 
-// Call the async function to establish the connection
 connectToDatabase();

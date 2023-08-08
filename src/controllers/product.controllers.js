@@ -45,7 +45,7 @@ const getById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     try {
-        // const { name, price, description, stock } = req.body;
+        const { name, price, description, stock } = req.body;
         const newProd = await service.create(req.body);
         if (!newProd) res.status(404).json({ msg: "Validation Error!" });
         else res.json(newProd);

@@ -44,7 +44,7 @@ router.get('/:cartId', async (req, res) => {
         // Extract only the products array from the cart
         const cartProducts = cart.products;
 
-        res.json(cartProducts);
+        res.render('cart', { cart, username: req.session.username, cartProducts })
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
