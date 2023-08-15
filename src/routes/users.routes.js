@@ -9,13 +9,14 @@ const router = express.Router();
 
 // Set up Passport Local strategy
 passport.use(new LocalStrategy(
-    async (email, password, done) => { 
+    { usernameField: 'email' },
+    async (email, password, done) => {
 
         try {
-            const user = await User.findOne({ email }); 
+            const user = await User.findOne({ email });
 
             if (!user) {
-                return done(null, false, { message: 'Invalid email' }); 
+                return done(null, false, { message: 'Invalid email' });
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -30,6 +31,21 @@ passport.use(new LocalStrategy(
         }
     }
 ));
+
+
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (err) {
+        done(err);
+    }
+});
 
 
 // Route to render the registration form view
@@ -66,13 +82,16 @@ router.post('/register', async (req, res) => {
 router.post('/login', passport.authenticate('local', {
     successRedirect: '/products',   // Redirect after successful login
     failureRedirect: '/auth/login', // Redirect after failed login
-    failureFlash: true               // Enable flash messages for errors
+    failureFlash: true
 }));
 
-// Protected route that requires authentication
-router.get('/', isAuthenticated, (req, res) => {
-    res.send('Welcome to the dashboard, ' + req.user.username);
+// After successful authentication, set session variables and redirect
+router.post('/login', (req, res) => {
+    // Assuming req.user holds the authenticated user object
+    req.session.username = req.user.username;
+    req.session.role = req.user.role;
 });
+
 
 // Route to handle user logout
 router.get('/logout', (req, res) => {
