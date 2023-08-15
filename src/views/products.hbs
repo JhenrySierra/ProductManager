@@ -8,6 +8,10 @@
 <body>
     <h2>Welcome, {{username}} ({{role}})</h2>
 
+        <a href="/auth/logout">
+            <button>Logout</button>
+        </a>
+
     <h3>Product List</h3>
     {{#each payload.payload}}
         {{#each this}}
