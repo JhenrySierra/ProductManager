@@ -1,6 +1,36 @@
 const express = require('express');
-const router = express.Router();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 const User = require('../daos/mongodb/models/user.model'); // Import the User model
+const isAuthenticated = require('../middlewares/isAuthenticated');
+
+const router = express.Router();
+
+// Set up Passport Local strategy
+passport.use(new LocalStrategy(
+    async (email, password, done) => { 
+
+        try {
+            const user = await User.findOne({ email }); 
+
+            if (!user) {
+                return done(null, false, { message: 'Invalid email' }); 
+            }
+
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+
+            if (!isPasswordValid) {
+                return done(null, false, { message: 'Invalid password.' });
+            }
+
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
+
 
 // Route to render the registration form view
 router.get('/register', (req, res) => {
@@ -14,55 +44,40 @@ router.get('/login', (req, res) => {
 
 // Route to handle user registration
 router.post('/register', async (req, res) => {
-
     try {
-        // Extract user data from the request body
         const { username, email, password } = req.body;
 
-        // Create a new user using the User model
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         const newUser = new User({
             username,
             email,
-            password,
+            password: hashedPassword,
         });
 
-        // Save the user to the database
         await newUser.save();
-
         res.status(201).send('User registered successfully!');
     } catch (err) {
         res.status(400).send('Error registering user.');
     }
 });
 
-// Route to handle user login
-router.post('/login', async (req, res) => {
-    try {
-        // Extract user data from the request body
-        const { email, password } = req.body;
+// Route to handle user login using Passport Local
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/products',   // Redirect after successful login
+    failureRedirect: '/auth/login', // Redirect after failed login
+    failureFlash: true               // Enable flash messages for errors
+}));
 
-        // Find the user with the given email
-        const user = await User.findOne({ email });
+// Protected route that requires authentication
+router.get('/', isAuthenticated, (req, res) => {
+    res.send('Welcome to the dashboard, ' + req.user.username);
+});
 
-        if (!user) {
-            return res.status(404).send('User not found.');
-        }
-
-        // Compare the provided password with the user's hashed password
-        if (user.password !== password) {
-            return res.status(401).send('Invalid password.');
-        }
-
-        // If login is successful, set up the session with the user's ID and get role
-        req.session.username = user.username;
-        req.session.role = user.role;
-
-        // If login is successful, redirect to products view
-        res.redirect('/products');
-        
-    } catch (err) {
-        res.status(400).send('Error logging in.');
-    }
+// Route to handle user logout
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
 });
 
 module.exports = router;

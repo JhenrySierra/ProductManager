@@ -4,6 +4,12 @@ const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const path = require('path');
 const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const flash = require('express-flash');
+
+
 const cookieParser = require('cookie-parser');
 require('./daos/mongodb/connection.js');
 const isAuthenticated = require('./middlewares/isAuthenticated.js');
@@ -21,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
 
+
 // Middleware for sessions
 app.use(
     session({
@@ -29,6 +36,10 @@ app.use(
         saveUninitialized: false,
     })
 );
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
