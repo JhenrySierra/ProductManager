@@ -14,7 +14,6 @@ const cookieParser = require('cookie-parser');
 require('./daos/mongodb/connection.js');
 const isAuthenticated = require('./middlewares/isAuthenticated.js');
 
-
 const productRouter = require('./routes/products.routes.js');
 const cartRouter = require('./routes/carts.routes.js');
 const viewRouter = require('./views/views.routes.js');

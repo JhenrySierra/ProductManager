@@ -12,7 +12,6 @@ const router = express.Router();
 passport.use(new LocalStrategy(
     { usernameField: 'email' },
     async (email, password, done) => {
-
         try {
             const user = await User.findOne({ email });
 
@@ -64,9 +63,12 @@ passport.use(new GitHubStrategy({
 
             // If user doesn't exist, create a new user in your database
             const newUser = new User({
-                email: profile.emails[0].value || 'default@example.com', 
-                username: profile.username || 'defaultUsername', 
-                password: 'defaultPassword', 
+                email: profile.emails[0].value || 'default@example.com',
+                username: profile.username || 'defaultUsername',
+                password: 'defaultPassword',
+                first_name: 'Default', // Add this line for the first name
+                last_name: 'User', // Add this line for the last name
+                age: 0, // Add this line for the age
                 role: 'user'
             });
 
@@ -103,37 +105,52 @@ router.get('/login', (req, res) => {
 // Route to handle user registration
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { first_name, last_name, username, email, age, password } = req.body;
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
+            first_name,
+            last_name,
             username,
             email,
+            age,
             password: hashedPassword,
+            role: 'user' // Default role
         });
 
         await newUser.save();
         res.status(201).send('User registered successfully!');
     } catch (err) {
-        res.status(400).send('Error registering user.');
+        res.status(400).send('Error registering user.', err);
     }
 });
 
-// Route to handle user login using Passport Local
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/products',   // Redirect after successful login
-    failureRedirect: '/auth/login', // Redirect after failed login
+    successRedirect: '/products',   
+    failureRedirect: '/auth/login', 
     failureFlash: true
 }));
 
-// After successful authentication, set session variables and redirect
 router.post('/login', (req, res) => {
-    // Assuming req.user holds the authenticated user object
     req.session.username = req.user.username;
     req.session.role = req.user.role;
 });
 
+// Add the /current route
+router.get('/current', isAuthenticated, async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.user._id);
+
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(currentUser);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching current user' });
+    }
+});
 
 // Route to handle user logout
 router.get('/logout', (req, res) => {
