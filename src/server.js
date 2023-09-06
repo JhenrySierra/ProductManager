@@ -1,16 +1,12 @@
 const express = require('express');
-const { errorHandler } = require('./middlewares/errorHandler.js');
 const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
 const flash = require('express-flash');
-
-
 const cookieParser = require('cookie-parser');
+
 require('./daos/mongodb/connection.js');
 const isAuthenticated = require('./middlewares/isAuthenticated.js');
 
