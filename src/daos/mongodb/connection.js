@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+require('dotenv/config') ;
 
-const connectionString = 'mongodb+srv://jhenrims:Wersdfzxc21@eCommerce.v0liqcx.mongodb.net/';
+const connectionString = process.env.MONGO_ATLAS_URL;
 
 async function connectToDatabase() {
     try {

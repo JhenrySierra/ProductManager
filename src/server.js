@@ -14,6 +14,7 @@ const productRouter = require('./routes/products.routes.js');
 const cartRouter = require('./routes/carts.routes.js');
 const viewRouter = require('./views/views.routes.js');
 const userRouter = require('./routes/users.routes.js')
+require('dotenv/config');
 
 const app = express();
 
@@ -26,7 +27,7 @@ app.use(cookieParser());
 // Middleware for sessions
 app.use(
     session({
-        secret: 'my-secret-key',
+        secret: process.env.SECRET_KEY,
         resave: false,
         saveUninitialized: false,
     })
@@ -48,6 +49,6 @@ app.engine('hbs', exphbs.engine({extname: '.hbs'}));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.listen(8080, () => {
-    console.log('🚀 Server listening on port 8080');
+app.listen(process.env.PORT, () => {
+    console.log(`🚀 Server listening on port ${process.env.PORT}`);
 });
