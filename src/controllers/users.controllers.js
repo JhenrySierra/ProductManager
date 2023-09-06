@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const User = require('../daos/mongodb/models/user.model');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const GitHubStrategy = require('passport-github2').Strategy;
+require('dotenv').config();
+
 
 const router = express.Router();
 
@@ -47,8 +49,8 @@ passport.deserializeUser(async (id, done) => {
 
 //Passport Github strategy
 passport.use(new GitHubStrategy({
-    clientID: 'Iv1.90fd71a6cca5ab8e',
-    clientSecret: 'e7e4db8d56ffbda5382b80c408cecc590be39e5b',
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: "http://localhost:8080/auth/github/callback" // Use your callback URL
 },
     async (accessToken, refreshToken, profile, done) => {
