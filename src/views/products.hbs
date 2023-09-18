@@ -8,21 +8,25 @@
 <body>
     <h2>Welcome, {{username}} ({{role}})</h2>
 
-        <a href="/auth/logout">
-            <button>Logout</button>
-        </a>
+    <a href="/auth/logout">
+        <button>Logout</button>
+    </a>
 
     <h3>Product List</h3>
+<ul>
     {{#each payload.payload}}
-        {{#each this}}
-            <p>{{stock}} {{title}}</p>
-            <p>{{description}}</p>
-            {{price}}
-
-        {{/each}}
-                            <button onclick="addToCart('{{_id}}')">Add to Cart</button><br><br><br>
-
+    {{#each this}}
+    <li>
+        {{title}}<br>
+        {{description}}<br>
+        {{price}}<br>
+        Stock: {{stock}}<br>
+        <button onclick="addToCart('{{_id}}')">Add to Cart</button>
+    </li>
+    {{/each }}
     {{/each}}
+</ul>
+
 
     <!-- Pagination links -->
     {{#if payload.hasNextPage}}
