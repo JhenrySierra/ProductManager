@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const User = require('../daos/mongodb/models/user.model');
 const isAuthenticated = require('../middlewares/isAuthenticated');
 const GitHubStrategy = require('passport-github2').Strategy;
+const { mapUserToDTO } = require('../dto/user.db.dto');
+const { sendUserResponse } = require('../dto/user.dto.res');
 require('dotenv').config();
 
 
@@ -140,12 +142,12 @@ const current = async (req, res) => {
         if (!currentUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        res.status(200).json(currentUser);
+        const userDTO = mapUserToDTO(currentUser);
+        sendUserResponse(res, userDTO);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching current user' });
     }
-}
+};
 
 // Route to handle user logout
 const logout = (req, res) => {
