@@ -8,7 +8,8 @@ router.get('/', async (req, res, next) => {
         const products = await productController.getAll(req);
         const username = req.user.first_name;
         const role = req.user.role; 
-        res.render('products', { payload: products, username, role });
+        const cartId = req.user.cart;
+        res.render('products', { payload: products, username, role, cartId:cartId });
     } catch (error) {
         next(error);
     }

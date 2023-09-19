@@ -44,7 +44,7 @@ const getById = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const { cartId, productId } = req.params;
-        const { quantity } = req.body;
+        const  quantity  =  1 ;
 
         if (!mongoose.isValidObjectId(productId)) {
             return res.status(400).json({ error: 'Invalid product ID format' });

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const CartModel = require('./cart.model')
 
 const userSchema = new Schema({
     first_name: { type: String },
@@ -8,7 +9,7 @@ const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     age: { type: Number },
     password: { type: String, required: true },
-    cart: { type: Schema.Types.ObjectId, ref: 'CartModel' },
+    cart: { type: Schema.Types.ObjectId, ref: CartModel },
     role: { type: String, default: "user" }
 });
 

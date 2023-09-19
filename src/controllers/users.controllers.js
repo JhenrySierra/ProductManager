@@ -8,6 +8,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const { mapUserToDTO } = require('../dto/user.db.dto');
 const { sendUserResponse } = require('../dto/user.dto.res');
 require('dotenv').config();
+const CartModel = require('../daos/mongodb/models/cart.model');
 
 
 const router = express.Router();
@@ -53,11 +54,11 @@ passport.deserializeUser(async (id, done) => {
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/github/callback" // Use your callback URL
+    callbackURL: "http://localhost:8080/auth/github/callback" // Use  callback URL
 },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            // Check if the user exists in your database based on the GitHub email
+            // Check if the user exists in  database based on the GitHub email
             const existingUser = await User.findOne({ email: profile.emails[0].value });
 
             if (existingUser) {
@@ -65,15 +66,16 @@ passport.use(new GitHubStrategy({
                 return done(null, existingUser);
             }
 
-            // If user doesn't exist, create a new user in your database
+            // If user doesn't exist, create a new user in  database
             const newUser = new User({
                 email: profile.emails[0].value || 'default@example.com',
                 username: profile.username || 'defaultUsername',
                 password: 'defaultPassword',
-                first_name: 'Default', // Add this line for the first name
-                last_name: 'User', // Add this line for the last name
-                age: 0, // Add this line for the age
-                role: 'user'
+                first_name: 'Default', 
+                last_name: 'User', 
+                age: 0, 
+                role: 'user',
+                cart: new CartModel()
             });
 
             await newUser.save();
@@ -84,7 +86,7 @@ passport.use(new GitHubStrategy({
     }
 ));
 
-router.get('/github', passport.authenticate('github', {scope: ['user:email']}));
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 // GitHub callback route
 router.get('/github/callback',
@@ -115,6 +117,10 @@ const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const newCart = new CartModel();
+        await newCart.save()
+
+
         const newUser = new User({
             first_name,
             last_name,
@@ -122,13 +128,16 @@ const register = async (req, res) => {
             email,
             age,
             password: hashedPassword,
-            role: 'user' // Default role
+            role: 'user', 
+            cart: newCart._id, 
+
         });
 
         await newUser.save();
         res.status(201).send('User registered successfully!');
     } catch (err) {
-        res.status(400).send('Error registering user.', err);
+        console.error(err); // Log the error for debugging purposes
+        res.status(400).send('Error registering user: ' + err.message);
     }
 };
 

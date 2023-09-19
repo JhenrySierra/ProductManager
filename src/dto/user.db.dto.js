@@ -4,6 +4,7 @@ const mapUserToDTO = (user) => {
         name: `${user.first_name} ${user.last_name}`,
         username: user.username,
         role: user.role,
+        cart: user.cartId
     };
 };
 

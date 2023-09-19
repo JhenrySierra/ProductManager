@@ -13,19 +13,23 @@
     </a>
 
     <h3>Product List</h3>
-<ul>
-    {{#each payload.payload}}
-    {{#each this}}
-    <li>
-        {{title}}<br>
-        {{description}}<br>
-        {{price}}<br>
-        Stock: {{stock}}<br>
-        <button onclick="addToCart('{{_id}}')">Add to Cart</button>
-    </li>
-    {{/each }}
-    {{/each}}
-</ul>
+    <ul>
+        {{#each payload.payload}}
+        {{#each this}}
+        <li>
+            {{title}}<br>
+            {{description}}<br>
+            {{price}}<br>
+            Stock: {{stock}}<br>
+            <form action="cart/{{../../cartId}}/products/{{_id}}" method="post">
+            <input type="number" id="quantity" name="quantity" min="1" required>
+                <button type="submit">Add to Cart</button>
+            </form>
+
+        </li>
+        {{/each }}
+        {{/each}}
+    </ul>
 
 
     <!-- Pagination links -->
@@ -37,12 +41,6 @@
     <a href="{{payload.prevLink}}">Previous</a>
     {{/if}}
 
-    <script>
-        function addToCart(productId) {
-            console.log('Adding product to cart:', productId);
-        }
-
-    </script>
 </body>
 
 </html>
