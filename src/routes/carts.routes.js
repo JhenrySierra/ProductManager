@@ -10,5 +10,6 @@ router
     .put('/:cartId', controller.update)
     .delete('/:cartId/products/:productId', controller.deleteFromCart)
     .delete('/:cartId', controller.emptyCart)
+    .post('/:cid/purchase', controller.purchase)
 
 module.exports = router;

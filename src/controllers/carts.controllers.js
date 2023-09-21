@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const CartModel = require('../daos/mongodb/models/cart.model');
 const mongoose = require('mongoose');
+const ProductModel = require('../daos/mongodb/models/product.model');
+const shortid = require('shortid');
+
+const Ticket = require('../daos/mongodb/models/ticket.model'); 
+
+
 
 // Retrieve all carts
 const getAll = async (req, res) => {
@@ -44,7 +50,8 @@ const getById = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const { cartId, productId } = req.params;
-        const  quantity  =  1 ;
+        const { quantity } = req.body;
+        console.log(quantity)
 
         if (!mongoose.isValidObjectId(productId)) {
             return res.status(400).json({ error: 'Invalid product ID format' });
@@ -75,6 +82,7 @@ const addToCart = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 
 // Update a cart
 const update = async (req, res) => {
@@ -137,7 +145,93 @@ const emptyCart = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
+// Generate a unique ticket code for purchase tracking
+const generateUniqueTicketCode = async () => {
+    let code;
+    do {
+        code = shortid.generate();
+    } while (await Ticket.findOne({ code }));
+    return code;
+};
+
+
+
+// Create and save a new ticket
+const createTicket = async (amount, purchaserEmail) => {
+    try {
+
+        console.log('Creating ticket with amount:', amount);
+
+        // Ensure 'amount' is a valid number
+        if (isNaN(amount)) {
+            throw new Error('Invalid amount value');
+        }
+
+        const code = await generateUniqueTicketCode();
+        const ticket = new Ticket({
+            code,
+            amount,
+            purchaser: purchaserEmail
+        });
+        await ticket.save();
+        return ticket;
+    } catch (error) {
+        // Handle any errors that occur during ticket creation and saving
+        console.error('Error creating ticket:', error);
+        throw error;
+    }
+};
+
+const purchase = async (req, res) => {
+    try {
+        const purchaserEmail = req.user.email;
+        const { cid } = req.params; // Get cart ID from request params
+        const cart = await CartModel.findById(cid).populate('products.product');
+
+        const calculateTotalAmount = (cart) => {
+            let amount = 0;
+
+            for (const item of cart.products) {
+                const productPrice = item.product.price; // Now 'product' is populated
+                console.log(`here>>>>>>`, productPrice);
+                const quantity = item.quantity;
+                amount += productPrice * quantity;
+            }
+
+            return amount;
+        };
+
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' });
+        }
+
+        const errors = [];
+
+        // Calculate the total amount of the purchase
+        const totalAmount = calculateTotalAmount(cart);
+
+        // Create a single ticket for the entire purchase
+        try {
+            const ticket = await createTicket(totalAmount, purchaserEmail);
+            // Remove all items from the cart as they are now part of the purchase
+            cart.products = [];
+            await cart.save();
+
+            // Return the ticket as part of the purchase response
+            res.json({ message: 'Purchase completed successfully', ticket });
+        } catch (error) {
+            // Handle any errors that occur during the ticket creation
+            errors.push(`Error creating ticket: ${error.message}`);
+            res.status(500).json({ errors });
+        }
+    } catch (error) {
+        console.error('Error finalizing purchase:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 module.exports = {
     getAll,
@@ -146,5 +240,7 @@ module.exports = {
     addToCart,
     update,
     deleteFromCart,
-    emptyCart
+    emptyCart,
+    purchase,
+    generateUniqueTicketCode
 };

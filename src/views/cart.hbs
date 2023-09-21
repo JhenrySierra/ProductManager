@@ -10,9 +10,20 @@
     <h2>Your cart</h2>
 
     {{#each cartProducts}}
+    {{product}}
+    {{#each this}}
+    {{product}}
+
     <div>
-        Product: {{this.title}} - Quantity: {{this.quantity}}
+        {{#each this}}
+        {{product}}
+        {{#each this}}
+        {{quantity}}
+        {{/each}}
     </div>
+    {{/each}}
+    {{/each}}
+
     {{/each}}
 </body>
 

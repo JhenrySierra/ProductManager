@@ -2,14 +2,17 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const cartSchema = new mongoose.Schema({
-    // Use the default _id field as ObjectId type
     products: [
         {
             product: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'products',
                 required: true,
-                quantity: { type: Number, required: true, default: 1 },
+            },
+            quantity: {
+                type: Number,
+                required: true,
+                default: 1,
             },
         },
     ],
