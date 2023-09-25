@@ -14,6 +14,8 @@ const productRouter = require('./routes/products.routes.js');
 const cartRouter = require('./routes/carts.routes.js');
 const viewRouter = require('./views/views.routes.js');
 const userRouter = require('./routes/users.routes.js')
+const mockingProducts = require('./routes/mocking.routes.js')
+
 require('dotenv').config();
 
 const app = express();
@@ -22,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
-
+const errorHandler = require('./middlewares/errorHandler.js');
 
 // Middleware for sessions
 app.use(
@@ -36,13 +38,16 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(errorHandler);
+
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
-// Custom middleware isAuthenticated for login
 app.use('/products', isAuthenticated, viewRouter);
 app.use('/auth', userRouter)  
 app.use('/cart', cartRouter)
+
+app.get('/mockingproducts', mockingProducts);
 
 // Set up Handlebars as the view engine
 app.engine('hbs', exphbs.engine({extname: '.hbs'}));

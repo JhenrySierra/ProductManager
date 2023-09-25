@@ -7,8 +7,6 @@ const shortid = require('shortid');
 
 const Ticket = require('../daos/mongodb/models/ticket.model'); 
 
-
-
 // Retrieve all carts
 const getAll = async (req, res) => {
     try {
@@ -40,7 +38,7 @@ const getById = async (req, res) => {
             return res.status(404).json({ error: 'Cart not found' });
         }
         const cartProducts = cart.products;
-        res.render('cart', { cart, username: req.session.username, cartProducts })
+        res.render('cart', { cart, username: req.session.username, cartProducts, cartId })
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
@@ -50,8 +48,8 @@ const getById = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const { cartId, productId } = req.params;
-        const { quantity } = req.body;
-        console.log(quantity)
+        let { quantity } = req.body;
+        quantity = parseInt(quantity)
 
         if (!mongoose.isValidObjectId(productId)) {
             return res.status(400).json({ error: 'Invalid product ID format' });
@@ -178,7 +176,6 @@ const createTicket = async (amount, purchaserEmail) => {
         await ticket.save();
         return ticket;
     } catch (error) {
-        // Handle any errors that occur during ticket creation and saving
         console.error('Error creating ticket:', error);
         throw error;
     }
@@ -187,15 +184,14 @@ const createTicket = async (amount, purchaserEmail) => {
 const purchase = async (req, res) => {
     try {
         const purchaserEmail = req.user.email;
-        const { cid } = req.params; // Get cart ID from request params
+        const { cid } = req.params; 
         const cart = await CartModel.findById(cid).populate('products.product');
 
         const calculateTotalAmount = (cart) => {
             let amount = 0;
 
             for (const item of cart.products) {
-                const productPrice = item.product.price; // Now 'product' is populated
-                console.log(`here>>>>>>`, productPrice);
+                const productPrice = item.product.price; 
                 const quantity = item.quantity;
                 amount += productPrice * quantity;
             }
@@ -215,14 +211,22 @@ const purchase = async (req, res) => {
         // Create a single ticket for the entire purchase
         try {
             const ticket = await createTicket(totalAmount, purchaserEmail);
-            // Remove all items from the cart as they are now part of the purchase
+
+            // Deduct stock from available products
+            for (const item of cart.products) {
+                const product = item.product;
+                const quantity = item.quantity;
+
+                // Update the stock for the product
+                product.stock -= quantity;
+                await product.save();
+            }
+
             cart.products = [];
             await cart.save();
 
-            // Return the ticket as part of the purchase response
             res.json({ message: 'Purchase completed successfully', ticket });
         } catch (error) {
-            // Handle any errors that occur during the ticket creation
             errors.push(`Error creating ticket: ${error.message}`);
             res.status(500).json({ errors });
         }

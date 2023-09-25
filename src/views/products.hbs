@@ -7,10 +7,14 @@
 
 <body>
     <h2>Welcome, {{username}} ({{role}})</h2>
-
     <a href="/auth/logout">
         <button>Logout</button>
     </a>
+    <a href="cart/{{cartId}}">
+        <button>Cart</button>
+    </a>
+
+
 
     <h3>Product List</h3>
     <ul>
@@ -28,7 +32,7 @@
             </form>
 
         </li>
-        {{/each }}
+        {{/each}}
         {{/each}}
     </ul>
 

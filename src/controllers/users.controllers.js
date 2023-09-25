@@ -136,7 +136,7 @@ const register = async (req, res) => {
         await newUser.save();
         res.status(201).send('User registered successfully!');
     } catch (err) {
-        console.error(err); // Log the error for debugging purposes
+        console.error(err);
         res.status(400).send('Error registering user: ' + err.message);
     }
 };
@@ -146,7 +146,7 @@ const register = async (req, res) => {
 
 const current = async (req, res) => {
     try {
-        const currentUser = await User.findById(req.user._id);
+        const currentUser = await User.findById(req.user._id).populate('cart');
 
         if (!currentUser) {
             return res.status(404).json({ message: 'User not found' });
