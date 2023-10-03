@@ -1,6 +1,5 @@
 const  ProductModel = require("./models/product.model.js");
-const { MongooseQueryOptions } = require("mongoose-paginate-v2");
-
+const logger = require('../../middlewares/logger.js')
 
 class ProductDaoMongoDB {
     async getAll(options) {
@@ -19,7 +18,7 @@ class ProductDaoMongoDB {
             const result = await ProductModel.paginate(searchQuery, queryOptions);
             return result;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             throw error;
         }
     }
@@ -30,7 +29,7 @@ class ProductDaoMongoDB {
             const response = await ProductModel.findById(id);
             return response;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -39,7 +38,7 @@ class ProductDaoMongoDB {
             const response = await ProductModel.create(obj);
             return response;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -48,7 +47,7 @@ class ProductDaoMongoDB {
             const response = await ProductModel.findByIdAndUpdate(id, obj, { new: true });
             return response;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -57,7 +56,7 @@ class ProductDaoMongoDB {
             const response = await ProductModel.findByIdAndDelete(id);
             return response;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 }

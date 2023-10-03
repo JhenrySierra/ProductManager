@@ -1,6 +1,7 @@
 const ProductDaoMongoDB = require("../daos/mongodb/product.dao.js");
 const prodDao = new ProductDaoMongoDB();
 const { QueryOptions } = require("mongoose-paginate-v2");
+const logger = require('../middlewares/logger.js')
 
 
 const getAll = async (options) => {
@@ -22,7 +23,7 @@ const getAll = async (options) => {
 
         return { payload: products, totalProducts, totalPages }; 
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         throw error;
     }
 };
@@ -33,7 +34,7 @@ const getById = async (id) => {
         if (!item) return false;
         else return item;
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -43,7 +44,7 @@ const create = async (obj) => {
         if (!newProd) return false;
         else return newProd;
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -52,7 +53,7 @@ const update = async (id, obj) => {
         const item = await prodDao.update(id, obj);
         return item;
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -61,7 +62,7 @@ const remove = async (id) => {
         const item = await prodDao.delete(id);
         return item;
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 

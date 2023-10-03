@@ -25,7 +25,7 @@ export default class ProductDaoFS {
             }
 
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -38,7 +38,7 @@ export default class ProductDaoFS {
             }
             return false;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -53,7 +53,7 @@ export default class ProductDaoFS {
             await fs.promises.writeFile(this.path, JSON.stringify(productsFile));
             return product;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -61,7 +61,6 @@ export default class ProductDaoFS {
         try {
             const productsFile = await this.getAll();
             const index = productsFile.findIndex(prod => prod.id === id);
-            console.log('index:::', index);
             if (index === -1) {
                 throw new Error(`Id ${id} not found`)
             } else {
@@ -69,7 +68,7 @@ export default class ProductDaoFS {
             }
             await fs.promises.writeFile(this.path, JSON.stringify(productsFile));
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -83,7 +82,7 @@ export default class ProductDaoFS {
                 throw new Error(`Product id: ${id} not found`);
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 

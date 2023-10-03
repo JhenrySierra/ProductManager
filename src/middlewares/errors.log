@@ -1,0 +1,25 @@
+2023-10-03T00:10:16.368Z [debug] This is a debug message.
+2023-10-03T00:10:16.369Z [http] This is an http message.
+2023-10-03T00:10:16.369Z [info] This is an info message.
+2023-10-03T00:10:16.369Z [warning] This is a warning message.
+2023-10-03T00:10:16.369Z [error] This is an error message.
+2023-10-03T00:11:01.554Z [debug] This is a debug message.
+2023-10-03T00:11:01.556Z [http] This is an http message.
+2023-10-03T00:11:01.556Z [info] This is an info message.
+2023-10-03T00:11:01.556Z [warning] This is a warning message.
+2023-10-03T00:11:01.556Z [error] This is an error message.
+2023-10-03T00:11:01.557Z [fatal] This is a fatal message.
+2023-10-03T00:14:09.090Z [debug] This is a debug message.
+2023-10-03T00:14:09.091Z [http] This is an http message.
+2023-10-03T00:14:09.092Z [info] This is an info message.
+2023-10-03T00:14:09.092Z [warning] This is a warning message.
+2023-10-03T00:14:09.092Z [error] This is an error message.
+2023-10-03T00:14:09.092Z [fatal] This is a fatal message.
+2023-10-03T00:26:11.927Z [info] 🚀 Server listening on port 8080
+2023-10-03T00:26:13.123Z [info] Conectado a la base de datos de MongoDB!
+2023-10-03T00:26:54.622Z [debug] This is a debug message.
+2023-10-03T00:26:54.622Z [http] This is an http message.
+2023-10-03T00:26:54.623Z [info] This is an info message.
+2023-10-03T00:26:54.623Z [warning] This is a warning message.
+2023-10-03T00:26:54.623Z [error] This is an error message.
+2023-10-03T00:26:54.623Z [fatal] This is a fatal message.

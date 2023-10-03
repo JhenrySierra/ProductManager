@@ -4,6 +4,7 @@ const CartModel = require('../daos/mongodb/models/cart.model');
 const mongoose = require('mongoose');
 const ProductModel = require('../daos/mongodb/models/product.model');
 const shortid = require('shortid');
+const logger = require('../middlewares/logger')
 
 const Ticket = require('../daos/mongodb/models/ticket.model'); 
 
@@ -160,7 +161,7 @@ const generateUniqueTicketCode = async () => {
 const createTicket = async (amount, purchaserEmail) => {
     try {
 
-        console.log('Creating ticket with amount:', amount);
+        logger.info('Creating ticket with amount:', amount);
 
         // Ensure 'amount' is a valid number
         if (isNaN(amount)) {

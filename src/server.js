@@ -17,6 +17,9 @@ const userRouter = require('./routes/users.routes.js')
 const mockingProducts = require('./routes/mocking.routes.js')
 
 require('dotenv').config();
+const logger = require('./middlewares/logger.js');
+
+const loggerTest = require('./middlewares/logger.test.js')
 
 const app = express();
 
@@ -40,6 +43,7 @@ app.use(passport.session());
 
 app.use(errorHandler);
 
+
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
@@ -48,6 +52,7 @@ app.use('/auth', userRouter)
 app.use('/cart', cartRouter)
 
 app.get('/mockingproducts', mockingProducts);
+app.get('/loggerTest', loggerTest)
 
 // Set up Handlebars as the view engine
 app.engine('hbs', exphbs.engine({extname: '.hbs'}));
@@ -57,5 +62,5 @@ app.set('views', path.join(__dirname, 'views'));
 const port = process.env.PORT;
 
 app.listen(port, () => {
-    console.log(`🚀 Server listening on port ${port}`);
+    logger.info(`🚀 Server listening on port ${port}`);
 });
