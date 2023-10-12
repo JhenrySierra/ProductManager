@@ -23,3 +23,43 @@
 2023-10-03T00:26:54.623Z [warning] This is a warning message.
 2023-10-03T00:26:54.623Z [error] This is an error message.
 2023-10-03T00:26:54.623Z [fatal] This is a fatal message.
+2023-10-11T23:49:58.945Z [info] 🚀 Server listening on port 8080
+2023-10-11T23:50:06.861Z [info] Conectado a la base de datos de MongoDB!
+2023-10-11T23:53:31.407Z [info] 🚀 Server listening on port 8080
+2023-10-11T23:53:38.062Z [info] Conectado a la base de datos de MongoDB!
+2023-10-11T23:58:19.264Z [info] 🚀 Server listening on port 8080
+2023-10-11T23:58:42.974Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T00:02:12.623Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:02:14.753Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T00:11:11.796Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:11:14.048Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T00:22:51.998Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:22:58.484Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T00:40:42.139Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:40:42.147Z [error] querySrv ECONNREFUSED _mongodb._tcp.eCommerce.v0liqcx.mongodb.net
+2023-10-12T00:41:22.070Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:41:23.152Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T00:55:21.766Z [info] 🚀 Server listening on port 8080
+2023-10-12T00:55:23.252Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:20:42.235Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:20:44.464Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:21:01.288Z [error] sendPasswordResetEmail is not a function
+2023-10-12T02:23:55.981Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:24:05.150Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:27:29.915Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:27:36.199Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:31:49.240Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:31:56.257Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:33:17.971Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:33:32.412Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:34:24.140Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:34:28.486Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:40:09.413Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:40:11.491Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:44:27.366Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:45:21.175Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:45:22.598Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:53:36.422Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:53:51.571Z [info] 🚀 Server listening on port 8080
+2023-10-12T02:53:57.005Z [info] Conectado a la base de datos de MongoDB!
+2023-10-12T02:54:55.474Z [error] jwt must be provided

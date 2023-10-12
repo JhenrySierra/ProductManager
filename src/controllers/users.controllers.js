@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../daos/mongodb/models/user.model');
 const isAuthenticated = require('../middlewares/isAuthenticated');
@@ -9,7 +10,9 @@ const { mapUserToDTO } = require('../dto/user.db.dto');
 const { sendUserResponse } = require('../dto/user.dto.res');
 require('dotenv').config();
 const CartModel = require('../daos/mongodb/models/cart.model');
-
+const resetSecret = process.env.SECRET_RESET;
+const { sendPasswordResetEmail } = require('../services/mailer.js')
+const logger = require('../middlewares/logger.js')
 
 const router = express.Router();
 
@@ -109,6 +112,15 @@ const registerView = (req, res) => {
 const loginView = (req, res) => {
     res.render('login', {});
 };
+
+const forgotPasswordView = (req, res) => {
+    res.render('forgotPassword', {});
+};
+
+const resetPassView = (req, res) => {
+    res.render('passwordReset', {});
+};
+
 // Route to handle user registration
 
 const register = async (req, res) => {
@@ -165,10 +177,79 @@ const logout = (req, res) => {
     });
 };
 
+
+
+// Function to generate a reset token and send a password reset email
+const resetPass = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        // Check if the user exists
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Generate a reset token with an expiration time (e.g., 1 hour)
+        const token = jwt.sign({ email }, resetSecret, { expiresIn: '1h' });
+
+        // Send a password reset email with the reset token
+        sendPasswordResetEmail(email, token); // Implement this function
+
+        res.status(200).json({ message: 'Password reset email sent successfully' });
+    } catch (error) {
+        logger.error(error)
+        res.status(500).json({ message: 'Error sending password reset email'});
+    }
+};
+
+// Function to update the user's password using the reset token
+const updatePass = async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body; // Assuming password and confirmPassword are submitted in the request body
+        const token = req.query.token; // Get the token from the query parameters
+
+        try {
+            // Verify the token with your secret
+            const { email } = jwt.verify(token, resetSecret);
+
+            // Find the user by email
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Update the user's password
+            user.password = hashedPassword;
+            await user.save();
+
+            // Respond with a success message
+            res.status(200).json({ message: 'Password reset successfully' });
+        } catch (error) {
+            logger.error(error)
+            res.status(400).json({ message: 'Invalid or expired token' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error resetting password' });
+    }
+};
+
+
+
+
 module.exports = {
     registerView,
     loginView,
+    forgotPasswordView,
+    resetPassView,
     register,
     current,
-    logout
+    logout,
+    resetPass,
+    updatePass
 };
