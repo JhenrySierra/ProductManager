@@ -21,6 +21,9 @@ const logger = require('./middlewares/logger.js');
 
 const loggerTest = require('./middlewares/logger.test.js')
 
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 const app = express();
 
 app.use(express.json());
@@ -28,6 +31,29 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
 const errorHandler = require('./middlewares/errorHandler.js');
+
+
+
+// Swagger options
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'My eCommerce APIs',
+            version: '1.0.0',
+            description: 'This are the docs explaining the functionalities for my eCommerce APIs',
+        },
+    },
+    servers: [
+        {
+            url: 'http://localhost:8080'  // Define the base URL of your API
+        }
+    ],
+    // API routes to be documented
+    apis: ['src/docs/*.yml'], // Add the paths to your route and documentation files here
+};
+const swaggerSpec = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Middleware for sessions
 app.use(
