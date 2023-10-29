@@ -81,3 +81,9 @@
 2023-10-18T23:51:57.798Z [info] Conectado a la base de datos de MongoDB!
 2023-10-18T23:53:59.215Z [info] 🚀 Server listening on port 8080
 2023-10-18T23:54:00.266Z [info] Conectado a la base de datos de MongoDB!
+2023-10-29T16:22:11.718Z [info] 🚀 Server listening on port 8080
+2023-10-29T16:22:12.792Z [info] Conectado a la base de datos de MongoDB!
+2023-10-29T16:35:13.631Z [info] 🚀 Server listening on port 8080
+2023-10-29T16:35:14.979Z [info] Conectado a la base de datos de MongoDB!
+2023-10-29T16:35:52.638Z [error] jwt must be provided
+2023-10-29T16:38:48.219Z [error] jwt must be provided

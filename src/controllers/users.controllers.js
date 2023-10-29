@@ -239,9 +239,6 @@ const updatePass = async (req, res) => {
     }
 };
 
-
-
-
 module.exports = {
     registerView,
     loginView,
