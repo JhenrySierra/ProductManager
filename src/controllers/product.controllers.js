@@ -13,7 +13,8 @@ const getAll = async (req, res, next) => {
         };
         const result = await service.getAll(options);
         
-        return {
+        // Send the response as JSON
+        res.status(200).json({
             status: 'success',
             payload: result.payload,
             totalPages: result.totalPages,
@@ -24,7 +25,7 @@ const getAll = async (req, res, next) => {
             hasNextPage: options.page < result.totalPages,
             prevLink: options.page > 1 ? `/products?limit=${options.limit}&page=${options.page - 1}` : null,
             nextLink: options.page < result.totalPages ? `/products?limit=${options.limit}&page=${options.page + 1}` : null,
-        };
+        });
 
 
     } catch (error) {

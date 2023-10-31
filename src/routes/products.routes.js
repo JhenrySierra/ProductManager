@@ -1,6 +1,6 @@
 const express = require("express");
 const controller = require('../controllers/product.controllers.js');
-const checkUserRole = require('../middlewares/checkUserRole.js'); // Adjust the path accordingly
+const checkUserRole = require('../middlewares/checkUserRole.js'); 
 
 
 const router = express.Router();
