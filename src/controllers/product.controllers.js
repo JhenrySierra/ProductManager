@@ -12,9 +12,8 @@ const getAll = async (req, res, next) => {
             query: query || undefined,
         };
         const result = await service.getAll(options);
-        
-        // Send the response as JSON
-        res.status(200).json({
+
+        const responseData = {
             status: 'success',
             payload: result.payload,
             totalPages: result.totalPages,
@@ -25,13 +24,17 @@ const getAll = async (req, res, next) => {
             hasNextPage: options.page < result.totalPages,
             prevLink: options.page > 1 ? `/products?limit=${options.limit}&page=${options.page - 1}` : null,
             nextLink: options.page < result.totalPages ? `/products?limit=${options.limit}&page=${options.page + 1}` : null,
-        });
+            username: req.user.first_name,
+            role: req.user.role,
+            cartId: req.user.cart,
+        };
 
-
+            return responseData; // Return the data for HTML rendering
     } catch (error) {
-        throw error;
+        next(error);
     }
 };
+
 
 const getById = async (req, res, next) => {
     try {
