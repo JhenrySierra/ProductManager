@@ -5,15 +5,13 @@ const productController = require('../controllers/product.controllers.js');
 // View to display all products
 router.get('/', async (req, res, next) => {
     try {
-        const products = await productController.getAll(req);
-        const username = req.user.first_name;
-        const role = req.user.role; 
-        const cartId = req.user.cart;
-        res.render('products', { payload: products, username, role, cartId:cartId });
+        const responseData = await productController.getAll(req, res, next);
+        res.render('products', responseData); // Render the 'products' view directly
     } catch (error) {
         next(error);
     }
 });
+
 
 
 
