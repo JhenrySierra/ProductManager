@@ -24,16 +24,26 @@ const getAll = async (req, res, next) => {
             hasNextPage: options.page < result.totalPages,
             prevLink: options.page > 1 ? `/products?limit=${options.limit}&page=${options.page - 1}` : null,
             nextLink: options.page < result.totalPages ? `/products?limit=${options.limit}&page=${options.page + 1}` : null,
+<<<<<<< HEAD
             username: req.user ? req.user.first_name || "API" : "API",
             role: req.user ? req.user.role : "API_ROLE", // Provide a default value if req.user is undefined
             cartId: req.user ? req.user.cart : null, // Provide a default value or handle accordingly
         };
 
         return responseData; // Return the data for HTML rendering
+=======
+            username: req.user.first_name,
+            role: req.user.role,
+            cartId: req.user.cart,
+        };
+
+            return responseData; // Return the data for HTML rendering
+>>>>>>> 5eb902b9ecca3ee5626dc1a9bfe637419bd0bf88
     } catch (error) {
         next(error);
     }
 };
+
 
 const getById = async (req, res, next) => {
     try {
