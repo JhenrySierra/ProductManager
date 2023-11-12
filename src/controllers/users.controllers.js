@@ -33,6 +33,11 @@ passport.use(new LocalStrategy(
                 return done(null, false, { message: 'Invalid password.' });
             }
 
+            // Update last_connection on successful login
+            user.last_connection = new Date();
+            await user.save();
+
+
             return done(null, user);
         } catch (err) {
             return done(err);
@@ -80,6 +85,7 @@ passport.use(new GitHubStrategy({
                 role: 'user',
                 cart: new CartModel()
             });
+
 
             await newUser.save();
             return done(null, newUser);
@@ -173,6 +179,7 @@ const current = async (req, res) => {
 // Route to handle user logout
 const logout = (req, res) => {
     req.logout(() => {
+        
         res.redirect('/auth/login');
     });
 };
@@ -246,12 +253,29 @@ const updateRole = async (uid, newRole) => {
             throw new Error('Invalid role');
         }
 
-        // Find the user by ID and update the role
-        const user = await User.findByIdAndUpdate(uid, { role: newRole }, { new: true });
+        // Find the user by ID
+        const user = await User.findById(uid);
 
         if (!user) {
             throw new Error('User not found');
         }
+
+        // Check if the user is upgrading to "premium"
+        if (newRole === 'premium') {
+            // Check if the required documents are uploaded
+            if (
+                !user.documents ||
+                !user.documents.some(doc => ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'].includes(doc.name))
+            ) {
+                throw new Error('User has not uploaded all required documents to upgrade to premium');
+            }
+        }
+
+        // Update the user's role
+        user.role = newRole;
+
+        // Save the updated user
+        await user.save();
 
         return { message: 'User role updated successfully', user };
     } catch (error) {

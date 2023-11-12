@@ -2,6 +2,8 @@ const express = require('express');
 const passport = require('passport');
 const controller = require('../controllers/users.controllers')
 const isAuthenticated = require('../middlewares/isAuthenticated')
+const upload = require('../middlewares/multer');
+
 
 const router = express.Router();
 
@@ -40,6 +42,32 @@ router.put('/premium/:uid/:newRole', async (req, res) => {
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+
+//Route to handle documents uploads
+
+router.post('/:uid/documents', upload.array('documents'), async (req, res) => {
+    try {
+        const userId = req.params.uid;
+        const documents = req.files.map(file => ({
+            name: file.originalname,
+            reference: file.filename,
+            folder: req.body.folder || 'documents'
+        }));
+
+        // Update the user's documents array
+        const user = await User.findByIdAndUpdate(userId, { $push: { documents } }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ message: 'Documents uploaded successfully', user });
+    } catch (error) {
+        console.error('Error uploading documents:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 

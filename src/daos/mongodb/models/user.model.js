@@ -10,7 +10,15 @@ const userSchema = new Schema({
     age: { type: Number },
     password: { type: String, required: true },
     cart: { type: Schema.Types.ObjectId, ref: CartModel },
-    role: { type: String, default: "user" }
+    role: { type: String, default: "user" },
+    last_connection: { type: Date },
+    documents: [
+        {
+            name: { type: String },
+            reference: { type: String },
+            folder: { type: String } // To store the folder where the document is saved
+        }
+    ]
 });
 
 const User = mongoose.model('users', userSchema);
