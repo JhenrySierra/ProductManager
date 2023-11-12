@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const exphbs = require('express-handlebars');
 const path = require('path');
+const cors = require('cors');
+
 
 const app = express();
 
@@ -12,6 +14,8 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 const errorHandler = require('./middlewares/errorHandler.js');
 app.use(errorHandler);
+app.use(cors());
+
 
 // Get the current module's directory
 const currentModuleDir = __dirname;

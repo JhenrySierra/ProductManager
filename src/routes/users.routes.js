@@ -31,6 +31,16 @@ router.post('/reset-pass',  controller.resetPass);
 
 router.post('/new-pass',  controller.updatePass);
 
+// Update role
+router.put('/premium/:uid/:newRole', async (req, res) => {
+    const { uid, newRole } = req.params;
 
+    try {
+        const result = await controller.updateRole(uid, newRole);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;

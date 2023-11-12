@@ -50,7 +50,7 @@ const addToCart = async (req, res) => {
     try {
         const { cartId, productId } = req.params;
         let { quantity } = req.body;
-        quantity = parseInt(quantity)
+        quantity = parseInt(quantity);
 
         if (!mongoose.isValidObjectId(productId)) {
             return res.status(400).json({ error: 'Invalid product ID format' });
@@ -65,7 +65,18 @@ const addToCart = async (req, res) => {
             return res.status(404).json({ error: 'Cart not found' });
         }
 
-        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+        const product = await ProductModel.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // Check if the user is premium and owns the product
+        const user = req.user;
+        if (user.role === 'premium' && product.owner === user._id.toString()) {
+            return res.status(403).json({ error: 'Premium users cannot add their own products to the cart' });
+        }
+
+        const productIndex = cart.products.findIndex((item) => item.product.toString() === productId);
 
         if (productIndex === -1) {
             cart.products.push({ product: productId, quantity });
@@ -80,7 +91,8 @@ const addToCart = async (req, res) => {
         console.error('Error adding product to cart:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
 
 
 // Update a cart

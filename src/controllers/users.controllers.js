@@ -146,7 +146,7 @@ const register = async (req, res) => {
         });
 
         await newUser.save();
-        res.status(201).send('User registered successfully!');
+        res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
         console.error(err);
         res.status(400).send('Error registering user: ' + err.message);
@@ -239,6 +239,27 @@ const updatePass = async (req, res) => {
     }
 };
 
+const updateRole = async (uid, newRole) => {
+    try {
+        // Validate the new role
+        if (!['user', 'premium'].includes(newRole)) {
+            throw new Error('Invalid role');
+        }
+
+        // Find the user by ID and update the role
+        const user = await User.findByIdAndUpdate(uid, { role: newRole }, { new: true });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return { message: 'User role updated successfully', user };
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        throw new Error('Internal server error');
+    }
+};
+
 module.exports = {
     registerView,
     loginView,
@@ -248,5 +269,6 @@ module.exports = {
     current,
     logout,
     resetPass,
-    updatePass
+    updatePass,
+    updateRole
 };

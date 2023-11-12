@@ -8,11 +8,12 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon server.js",
-    "test": "mocha src/test/*.test.js' --timeout 10000"
+    "test": "mocha src/test/*.test.js --timeout 10000"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-flash": "^0.0.2",
@@ -30,6 +31,7 @@
     "socket.io": "^4.7.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
+    "validator": "^13.11.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
